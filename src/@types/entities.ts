@@ -6,6 +6,7 @@ export interface Host extends utools.db.DbObject {
     pemFile: string;
     loginType: LoginType;
     isFixed: boolean;
+    sort?: number;
     GroupId: string;
     Group: Group;
     createDate: number;
@@ -21,6 +22,7 @@ export enum LoginType {
 export interface Group extends utools.db.DbObject {
     name: string;
     password: string;
+    sort?: number;
     Hosts?: Array<Host>;
     createDate: number;
 }

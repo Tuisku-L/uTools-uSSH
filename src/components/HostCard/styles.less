@@ -1,0 +1,29 @@
+.hostImg {
+    padding: 1em 0;
+    background: #191919;
+    position: relative;
+    user-select: none;
+
+    .actionBox {
+        color: white;
+        background: #676769;
+        position: absolute;
+        right: 7px;
+        border-radius: 1em;
+        padding: 0 1em;
+        font-size: .8em;
+        top: 7px;
+        display: none;
+    }
+
+    &:hover {
+        .actionBox {
+            display: block;
+        }
+    }
+
+    img {
+        height: 100%;
+        width: 100%;
+    }
+}

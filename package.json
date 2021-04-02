@@ -23,6 +23,7 @@
     "@ant-design/pro-layout": "^6.5.0",
     "@umijs/preset-react": "1.x",
     "antd": "^4.15.0",
+    "linq": "^3.2.3",
     "umi": "^3.4.7"
   },
   "devDependencies": {

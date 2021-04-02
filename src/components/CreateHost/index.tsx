@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as Services from "@/utils/uToolsDb";
 import { Form, Input, Radio, Button, Row, Col, message, Spin } from "antd";
 import { Host, LoginType } from "@/@types/entities";
@@ -7,16 +7,46 @@ const createHost = (props: { groupId: string, editHost?: Host, onFinish: Functio
     const { editHost } = props;
     const [isLoading, setIsLoading] = useState(false);
     const [loginType, setLoginType] = useState(LoginType.Normal);
+    const [form] = Form.useForm();
+
+    useEffect(() => {
+        if (props.editHost) {
+            setLoginType(props.editHost.loginType);
+        }
+    }, [props.editHost]);
 
     const onSubmit = (values: Host) => {
         values.createDate = Date.now();
         values.isFixed = false;
         values.GroupId = props.groupId;
-        values._id = `host|${props.groupId}|${values.createDate}`;
-
+        values.sort = Number(values.sort);
+        if (editHost) {
+            values._rev = editHost._rev;
+            values._id = editHost._id;
+        } else {
+            values._id = `host|${props.groupId}|${values.createDate}`;
+        }
         const result = Services.createOrUpdateHost(values);
-        console.info("result", result)
+        if (result) {
+            message.success("操作成功");
+        } else {
+            message.error("操作失败");
+        }
         props.onFinish && props.onFinish();
+    }
+
+    const actionChoosePemFile = () => {
+        const file = window.utools.showOpenDialog({
+            title: "请选择登录服务器使用的私钥文件",
+            properties: ["openFile"],
+            message: "为了你的服务器安全，私钥文件不会通过 uTools 进行同步。如果你需要在多台设备使用插件，请在每一台设备上重新设置私钥文件地址。"
+        });
+
+        if (file) {
+            form.setFieldsValue({
+                pemFile: file[0]
+            });
+        }
     }
 
     return <Spin spinning={isLoading}>
@@ -25,6 +55,7 @@ const createHost = (props: { groupId: string, editHost?: Host, onFinish: Functio
             labelAlign="right"
             style={{ paddingTop: "1em" }}
             onFinish={onSubmit}
+            form={form}
         >
             <Form.Item
                 label="名称"
@@ -68,7 +99,7 @@ const createHost = (props: { groupId: string, editHost?: Host, onFinish: Functio
                         message: "请输入正确的端口号"
                     }
                 ]}
-                initialValue={editHost ? editHost.port : ""}
+                initialValue={editHost ? editHost.port : "22"}
             >
                 <Input type="number" placeholder="服务器的 SSH 端口号" />
             </Form.Item>
@@ -86,23 +117,23 @@ const createHost = (props: { groupId: string, editHost?: Host, onFinish: Functio
                     onChange={e => setLoginType(e.target.value)}
                 >
                     <Radio value={LoginType.Normal}>正常登陆</Radio>
-                    <Radio value={LoginType.Pem}>密钥登录</Radio>
+                    <Radio value={LoginType.Pem}>公钥验证</Radio>
                 </Radio.Group>
             </Form.Item>
             {
                 loginType === LoginType.Pem &&
                 <Form.Item
-                    label="密钥文件"
+                    label="私钥文件"
                     name="pemFile"
                     rules={[
                         {
                             required: true,
-                            message: "请选择密钥文件"
+                            message: "请选择私钥文件"
                         }
                     ]}
                     initialValue={editHost ? editHost.pemFile : ""}
                 >
-                    <Input readOnly disabled placeholder="密钥文件" />
+                    <Input readOnly placeholder="私钥文件" onClick={actionChoosePemFile} />
                 </Form.Item>
             }
             <Form.Item style={{ textAlign: "center" }}>
@@ -111,7 +142,7 @@ const createHost = (props: { groupId: string, editHost?: Host, onFinish: Functio
                     htmlType="submit"
                     style={{ width: "100px" }}
                 >
-                    确认添加
+                    {editHost ? "确认修改" : "确认添加"}
                 </Button>
             </Form.Item>
         </Form>

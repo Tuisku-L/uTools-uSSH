@@ -1,5 +1,16 @@
 declare namespace utools {
+    interface ShowOpenDialogOptions {
+        title?: string;
+        defaultPath?: string;
+        buttonLabel?: string;
+        properties?: Array<string>,
+        message?: string;
+    }
 
+    export function onPluginReady(callback: Function): void;
+    export function showOpenDialog(options: ShowOpenDialogOptions): Array<string> | undefined;
+    export function showNotification(body: string, clickFeatureCode?: string): void;
+    export function getPath(name: string): string;
     export namespace db {
         interface DbObject {
             _id: string;
