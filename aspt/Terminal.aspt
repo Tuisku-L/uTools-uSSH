@@ -1,0 +1,4 @@
+#!/bin/bash
+osascript - "$@" <<EOF
+tell application "Terminal" to do script ""
+EOF

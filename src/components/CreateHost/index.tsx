@@ -17,20 +17,21 @@ const createHost = (props: { groupId: string, editHost?: Host, onFinish: Functio
 
     const onSubmit = (values: Host) => {
         values.createDate = Date.now();
-        values.isFixed = false;
         values.GroupId = props.groupId;
         values.sort = Number(values.sort);
         if (editHost) {
             values._rev = editHost._rev;
             values._id = editHost._id;
+            values.isFixed = editHost.isFixed;
         } else {
             values._id = `host|${props.groupId}|${values.createDate}`;
+            values.isFixed = false;
         }
         const result = Services.createOrUpdateHost(values);
         if (result) {
-            message.success("操作成功");
+            message.success("操作成功", 1.5);
         } else {
-            message.error("操作失败");
+            message.error("操作失败", 1.5);
         }
         props.onFinish && props.onFinish();
     }
@@ -132,6 +133,7 @@ const createHost = (props: { groupId: string, editHost?: Host, onFinish: Functio
                         }
                     ]}
                     initialValue={editHost ? editHost.pemFile : ""}
+                    extra={<span style={{ fontSize: ".8em" }}>为了你的服务器安全，私钥文件不会通过 uTools 进行同步。如果你需要在多台设备使用插件，请在每一台设备上重新设置私钥文件地址。</span>}
                 >
                     <Input readOnly placeholder="私钥文件" onClick={actionChoosePemFile} />
                 </Form.Item>

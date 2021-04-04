@@ -8,14 +8,15 @@
 
 当然，市面上有专业的 SSH 管理软件。这个插件只是为了给不想装乱七八糟软件的同学使用。
 
-目前仅适用于 ```macOS``` 并且依赖 ```iTerm```。未来会支持自定义终端软件以及其他操作系统。
+目前仅适用于 ```macOS```。未来会支持其他操作系统以及自定义终端软件。
 
 # 怎么用
 
 - 默认有一个 ```常用``` 分组，此分组无法删除。
 - 添加自定义分组并且视情况设置查看密码。
 - 分组下添加服务器，若服务器使用公钥验证，请确保你的私钥为 ```600``` 或更严格的权限。
-- 双击即可调用 iTerm 连接服务器。
+- 在全局设置中可以选择使用系统自带的终端或 iTerm。
+- 双击即可调用终端连接服务器。
 
 # 特别说明
 
@@ -23,8 +24,12 @@
 
 # 截图
 
-![](https://upload-save-1251792221.cos.ap-shanghai.myqcloud.com/public/3801617385784_.pic.jpg?imageMogr2/thumbnail/800x/format/webp/interlace/1/quality/100|watermark/2/text/QFNpbGVuY2VyTCAtIFYyQy50ZWNo/font/bXN5aGJkLnR0Zg/fontsize/16/fill/I2ZmZmZmZg/dissolve/70/gravity/southeast/dx/10/dy/10)
+![](https://upload-save-1251792221.cos.ap-shanghai.myqcloud.com/public/3841617456273_.pic.jpg?imageMogr2/thumbnail/800x/format/webp/interlace/1/quality/100|watermark/2/text/QFNpbGVuY2VyTCAtIFYyQy50ZWNo/font/bXN5aGJkLnR0Zg/fontsize/16/fill/I2ZmZmZmZg/dissolve/70/gravity/southeast/dx/10/dy/10)
 
-![](https://upload-save-1251792221.cos.ap-shanghai.myqcloud.com/public/3791617385784_.pic.jpg?imageMogr2/thumbnail/800x/format/webp/interlace/1/quality/100|watermark/2/text/QFNpbGVuY2VyTCAtIFYyQy50ZWNo/font/bXN5aGJkLnR0Zg/fontsize/16/fill/I2ZmZmZmZg/dissolve/70/gravity/southeast/dx/10/dy/10)
+![](https://upload-save-1251792221.cos.ap-shanghai.myqcloud.com/public/3821617455145_.pic.jpg?imageMogr2/thumbnail/800x/format/webp/interlace/1/quality/100|watermark/2/text/QFNpbGVuY2VyTCAtIFYyQy50ZWNo/font/bXN5aGJkLnR0Zg/fontsize/16/fill/I2ZmZmZmZg/dissolve/70/gravity/southeast/dx/10/dy/10)
 
-![](https://upload-save-1251792221.cos.ap-shanghai.myqcloud.com/public/3811617385784_.pic.jpg?imageMogr2/thumbnail/800x/format/webp/interlace/1/quality/100|watermark/2/text/QFNpbGVuY2VyTCAtIFYyQy50ZWNo/font/bXN5aGJkLnR0Zg/fontsize/16/fill/I2ZmZmZmZg/dissolve/70/gravity/southeast/dx/10/dy/10)
+![](https://upload-save-1251792221.cos.ap-shanghai.myqcloud.com/public/3831617455220_.pic.jpg?imageMogr2/thumbnail/800x/format/webp/interlace/1/quality/100|watermark/2/text/QFNpbGVuY2VyTCAtIFYyQy50ZWNo/font/bXN5aGJkLnR0Zg/fontsize/16/fill/I2ZmZmZmZg/dissolve/70/gravity/southeast/dx/10/dy/10)
+
+![](https://upload-save-1251792221.cos.ap-shanghai.myqcloud.com/public/3851617456294_.pic.jpg?imageMogr2/thumbnail/800x/format/webp/interlace/1/quality/100|watermark/2/text/QFNpbGVuY2VyTCAtIFYyQy50ZWNo/font/bXN5aGJkLnR0Zg/fontsize/16/fill/I2ZmZmZmZg/dissolve/70/gravity/southeast/dx/10/dy/10)
+
+![](https://upload-save-1251792221.cos.ap-shanghai.myqcloud.com/public/3861617456342_.pic.jpg?imageMogr2/thumbnail/800x/format/webp/interlace/1/quality/100|watermark/2/text/QFNpbGVuY2VyTCAtIFYyQy50ZWNo/font/bXN5aGJkLnR0Zg/fontsize/16/fill/I2ZmZmZmZg/dissolve/70/gravity/southeast/dx/10/dy/10)

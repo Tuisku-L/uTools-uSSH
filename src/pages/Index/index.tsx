@@ -1,6 +1,6 @@
 import React from "react";
 import linq from "linq";
-import { Button, Col, Layout, Menu, Row, Modal, message, Input, Spin } from 'antd';
+import { Button, Col, Layout, Menu, Row, Modal, message, Input, Spin, Radio } from 'antd';
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons"
 import HostList from "@/components/HostList";
 import CreateGroup from "@/components/CreateGroup";
@@ -20,18 +20,21 @@ interface IState {
     currentGroup: string;
     modalDisplay: boolean;
     editGroup: Group | undefined;
+    terminalType: "Terminal" | "iTerm" | null;
 }
 
 export default class Index extends React.Component<IProps, IState>{
     pwdInput: any;
+    radioType: any;
     constructor(props: IProps) {
         super(props);
         this.state = {
             isInit: false,
             groups: [],
-            currentGroup: "group|fixed",
+            currentGroup: "",
             modalDisplay: false,
-            editGroup: undefined
+            editGroup: undefined,
+            terminalType: null
         };
     }
 
@@ -57,13 +60,22 @@ export default class Index extends React.Component<IProps, IState>{
                 createDate: Date.now()
             });
         }
-        this.actionGetGroup();
+
+        this.setState({
+            currentGroup: "group|fixed"
+        }, () => {
+            this.actionGetGroup();
+            const type = Services.getTerminalType();
+            window.terminalType = type;
+            this.setState({
+                terminalType: type
+            });
+        });
     }
 
     actionGetGroup = () => {
         let groups = Services.GetGroups();
         groups = linq.from(groups).orderBy(x => x.sort).toArray();
-        console.info("groups", groups)
         this.setState({
             groups,
             modalDisplay: false
@@ -84,16 +96,61 @@ export default class Index extends React.Component<IProps, IState>{
                         if (pwd === group.password) {
                             return Promise.resolve(cb());
                         } else {
-                            return Promise.reject(message.warning("密码错误"));
+                            return Promise.reject(message.warning("密码错误", 1.5));
                         }
                     } else {
-                        return Promise.reject(message.warning("请输入密码"));
+                        return Promise.reject(message.warning("请输入密码", 1.5));
                     }
                 }
             });
         } else {
             cb();
         }
+    }
+
+    actionGlolbalSetting = () => {
+        Modal.info({
+            title: null,
+            icon: null,
+            closable: true,
+            maskClosable: false,
+            okButtonProps: { style: { display: "none" } },
+            width: 300,
+            content: <div>
+                <div>终端类型：</div><br />
+                <div>
+                    <Radio.Group
+                        defaultValue={window.terminalType}
+                        // ref={ref => this.radioType = ref}
+                        onChange={e => this.setState({ terminalType: e.target.value })}
+                    >
+                        <Radio value="Terminal">Terminal</Radio>
+                        <Radio value="iTerm">iTerm</Radio>
+                    </Radio.Group >
+                </div><br />
+                <div>
+                    <Button
+                        size="small"
+                        type="primary"
+                        onClick={() => {
+                            const { terminalType } = this.state;
+                            if (terminalType) {
+                                const result = Services.changeTerminalType(terminalType);
+                                if (result) {
+                                    window.terminalType = terminalType;
+                                    message.success("设置成功", 1.5);
+                                    Modal.destroyAll();
+                                } else {
+                                    message.error("操作失败", 1.5);
+                                }
+                            }
+                        }}
+                    >
+                        保存
+                    </Button>
+                </div>
+            </div >
+        });
     }
 
     public render = () => {
@@ -153,16 +210,15 @@ export default class Index extends React.Component<IProps, IState>{
                                                                         content: `是否确认删除分组 ${group.name}，分组下的服务器也将一并删除。`,
                                                                         onOk: () => {
                                                                             const result = Services.removeGroup(group._id);
-                                                                            console.info("group._id", group._id, result)
                                                                             if (result) {
                                                                                 this.actionInitDefaultGroup();
                                                                                 this.setState({
                                                                                     currentGroup: "group|fixed"
                                                                                 }, () => {
-                                                                                    return Promise.resolve(message.success("删除成功"));
+                                                                                    return Promise.resolve(message.success("删除成功", 1.5));
                                                                                 });
                                                                             } else {
-                                                                                return Promise.reject(message.error("删除失败"));
+                                                                                return Promise.reject(message.error("删除失败", 1.5));
                                                                             }
                                                                         }
                                                                     });
@@ -178,12 +234,23 @@ export default class Index extends React.Component<IProps, IState>{
                             }
                         </Menu>
                     </div>
+                    <div style={{ padding: "1em", position: "absolute", width: "100%", bottom: 0 }}>
+                        <Button
+                            style={{ width: "100%" }}
+                            onClick={this.actionGlolbalSetting}
+                        >
+                            全局设置
+                        </Button>
+                    </div>
                 </Layout.Sider>
                 <Layout>
                     <Layout.Content>
-                        <div style={{ padding: "1em" }}>
-                            <HostList groupId={currentGroup} />
-                        </div>
+                        {
+                            currentGroup && currentGroup !== "" &&
+                            <div style={{ padding: "1em" }}>
+                                <HostList groupId={currentGroup} />
+                            </div>
+                        }
                     </Layout.Content>
                 </Layout>
                 <Modal

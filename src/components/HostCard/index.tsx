@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Card, Divider, Modal } from "antd";
-import { ApiOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons"
+import { StarOutlined, EditOutlined, DeleteOutlined, StarFilled } from "@ant-design/icons"
 import { Host } from "@/@types/entities";
 import CoverImage from "./coverImg";
 import styles from "./styles.less";
-import { exec_ssh_connect, execShell } from "@/utils/system";
+import { exec_ssh_connect } from "@/utils/system";
 
 
-const hostCard = (props: { host: Host, onEdit: Function, onRemove: Function }) => {
+const hostCard = (props: { host: Host, onEdit: Function, onRemove: Function, onFixedChange: Function, actionBar: boolean }) => {
     return <Card
         hoverable
         cover={
@@ -20,20 +20,30 @@ const hostCard = (props: { host: Host, onEdit: Function, onRemove: Function }) =
                         }}
                     />
                     <Divider type="vertical" />
-                    <DeleteOutlined
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            props.onRemove(props.host._id)
-                        }}
-                    />
+                    {
+                        props.host.isFixed ?
+                            <StarFilled style={{ color: "yellow" }} onClick={() => props.onFixedChange(props.host)} /> :
+                            <StarOutlined onClick={() => props.onFixedChange(props.host)} />
+                    }
+                    {
+                        props.actionBar &&
+                        <>
+                            <Divider type="vertical" />
+                            <DeleteOutlined
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    props.onRemove(props.host._id)
+                                }}
+                            />
+                        </>
+                    }
                 </div>
                 <img src={CoverImage} />
             </div>
         }
         onDoubleClick={() => {
             const { host } = props;
-            execShell(`chmod +x ${window.__dirname}/run.aspt`);
-            exec_ssh_connect(host.user, host.address, host.port, host.pemFile);
+            exec_ssh_connect(host.user, host.address, host.port, host.pemFile, window.terminalType);
         }}
         style={{ userSelect: "none" }}
     >

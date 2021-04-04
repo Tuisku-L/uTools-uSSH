@@ -12,7 +12,7 @@ const createGroup = (props: { editGroup?: Group, onFinish?: Function }) => {
         values.createDate = Date.now();
         values.sort = Number(values.sort);
         if (isNaN(values.sort) || values.sort <= 0) {
-            return message.warn("请输入大于零的正确排序数字");
+            return message.warn("请输入大于零的正确排序数字", 1.5);
         }
         if (editGroup) {
             values._rev = editGroup._rev;
@@ -22,9 +22,9 @@ const createGroup = (props: { editGroup?: Group, onFinish?: Function }) => {
         }
         const result = Services.createOrUpdateGroup(values);
         if (result) {
-            message.success("操作成功");
+            message.success("操作成功", 1.5);
         } else {
-            message.error("操作失败");
+            message.error("操作失败", 1.5);
         }
         props.onFinish && props.onFinish();
     }

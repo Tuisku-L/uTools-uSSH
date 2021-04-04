@@ -35,3 +35,67 @@ export function removeGroup(groupId: string) {
     const result = window.utools.db.remove(groupId);
     return result.ok;
 };
+
+export function addFixed(hostId: string): boolean {
+    const result = window.utools.db.get("fixed_list");
+    if (!result) {
+        const fixedList = {
+            _id: `fixed_list`,
+            list: [hostId]
+        };
+
+        const addResult = window.utools.db.put(fixedList);
+        return addResult.ok;
+    }
+
+    result.list.push(hostId);
+    const upadteResult = window.utools.db.put(result);
+    return upadteResult.ok;
+};
+
+export function removeFixed(hostId: string): boolean {
+    const result = window.utools.db.get("fixed_list");
+    result.list = result.list.filter((x: string) => x !== hostId);
+
+    const removeResult = window.utools.db.put(result);
+    return removeResult.ok;
+};
+
+export function getFixedHosts() {
+    const result = window.utools.db.get("fixed_list");
+    if (!result) {
+        const fixedList = {
+            _id: `fixed_list`,
+            list: []
+        };
+
+        window.utools.db.put(fixedList)
+        return [];
+    }
+    return window.utools.db.allDocs<Host>(result.list);
+};
+
+export function getTerminalType(): "Terminal" | "iTerm" {
+    const result = window.utools.db.get<{ _id: string, type: "Terminal" | "iTerm" }>("terminal_type");
+    let type: "Terminal" | "iTerm" = "Terminal";
+    if (!result) {
+        window.utools.db.put({
+            _id: "terminal_type",
+            type: "Terminal"
+        });
+
+        type = "Terminal";
+    } else {
+        type = result.type;
+    }
+
+    return type;
+};
+
+export function changeTerminalType(type: "Terminal" | "iTerm") {
+    const result = window.utools.db.get<{ _id: string, type: "Terminal" | "iTerm" }>("terminal_type");
+    result.type = type;
+    const changeResult = window.utools.db.put(result);
+
+    return changeResult.ok;
+};

@@ -42,40 +42,46 @@ export default class HostList extends React.Component<IProps, IState>{
 
     actionInit = (groupId: string) => {
         const group = Services.GetGroup(groupId);
-        this.setState({
-            group
-        }, () => {
-            if (group.password && group.password !== "") {
-                Modal.warning({
-                    title: "请输入分组查看密码",
-                    content: <div style={{ padding: "1em 0" }}>
-                        <Input.Password ref={ref => this.pwdInput = ref} />
-                    </div>,
-                    onOk: () => {
-                        const pwd = this.pwdInput.state.value;
-                        if (pwd && pwd !== "") {
-                            if (pwd === group.password) {
-                                this.actionGetHostByGroupId(groupId);
-                                return Promise.resolve(null);
+        if (group) {
+            this.setState({
+                group
+            }, () => {
+                if (group.password && group.password !== "") {
+                    Modal.warning({
+                        title: "请输入分组查看密码",
+                        content: <div style={{ padding: "1em 0" }}>
+                            <Input.Password ref={ref => this.pwdInput = ref} />
+                        </div>,
+                        onOk: () => {
+                            const pwd = this.pwdInput.state.value;
+                            if (pwd && pwd !== "") {
+                                if (pwd === group.password) {
+                                    this.actionGetHostByGroupId(groupId);
+                                    return Promise.resolve(null);
+                                } else {
+                                    return Promise.reject(message.warning("密码错误", 1.5));
+                                }
                             } else {
-                                return Promise.reject(message.warning("密码错误"));
+                                return Promise.reject(message.warning("请输入密码", 1.5));
                             }
-                        } else {
-                            return Promise.reject(message.warning("请输入密码"));
                         }
-                    }
-                });
-            } else {
-                console.info("2")
-                this.actionGetHostByGroupId(groupId);
-            }
-        });
+                    });
+                } else {
+                    this.actionGetHostByGroupId(groupId);
+                }
+            });
+        }
     }
 
     actionGetHostByGroupId = (groupId: string) => {
-        const hosts = Services.GetHostsByGroupId(groupId);
+        let hosts: Array<Host> = [];
+        if (groupId.includes("group|fixed")) {
+            hosts = Services.getFixedHosts();
+        } else {
+            hosts = Services.GetHostsByGroupId(groupId);
+        }
         this.setState({
-            hosts,
+            hosts
         });
     }
 
@@ -102,12 +108,29 @@ export default class HostList extends React.Component<IProps, IState>{
                 const result = Services.removeHost(hostId);
                 if (result) {
                     this.actionGetHostByGroupId(this.props.groupId);
-                    return Promise.resolve(message.success("删除成功"));
+                    return Promise.resolve(message.success("删除成功", 1.5));
                 } else {
-                    return Promise.reject(message.warn("删除失败"));
+                    return Promise.reject(message.warn("删除失败", 1.5));
                 }
             }
         })
+    }
+
+    actionOnFixedChange = (host: Host) => {
+        host.isFixed = !host.isFixed;
+        const result = Services.createOrUpdateHost(host);
+        if (result) {
+            if (host.isFixed) {
+                Services.addFixed(host._id);
+            } else {
+                Services.removeFixed(host._id);
+            }
+
+            message.success("操作成功", 1.5);
+            this.actionGetHostByGroupId(this.props.groupId);
+        } else {
+            message.error("操作失败", 1.5);
+        }
     }
 
     public render = () => {
@@ -122,14 +145,17 @@ export default class HostList extends React.Component<IProps, IState>{
                 <Col span={20}>
                     <div style={{ fontSize: "1.3em" }}>{group.name}</div>
                 </Col>
-                <Col span={4} style={{ textAlign: "right" }}>
-                    <Button
-                        type="primary"
-                        onClick={() => this.setState({ modalDisplay: true })}
-                    >
-                        添加服务器
+                {
+                    !group._id.includes("group|fixed") &&
+                    <Col span={4} style={{ textAlign: "right" }}>
+                        <Button
+                            type="primary"
+                            onClick={() => this.setState({ modalDisplay: true })}
+                        >
+                            添加服务器
                     </Button>
-                </Col>
+                    </Col>
+                }
             </Row>
             <Divider style={{ margin: "1em auto" }} />
             <div>
@@ -143,6 +169,8 @@ export default class HostList extends React.Component<IProps, IState>{
                                             host={host}
                                             onEdit={() => this.actionOnEdit(host)}
                                             onRemove={this.actionOnRemove}
+                                            onFixedChange={this.actionOnFixedChange}
+                                            actionBar={!group._id.includes("group|fixed")}
                                         />
                                     </Col>
                                 )
@@ -157,6 +185,7 @@ export default class HostList extends React.Component<IProps, IState>{
                 onCancel={() => this.setState({ modalDisplay: false, editHost: undefined })}
                 footer={false}
                 destroyOnClose
+                centered
             >
                 {
                     modalDisplay &&
