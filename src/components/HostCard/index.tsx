@@ -50,7 +50,12 @@ const hostCard = (props: { host: Host, onEdit: Function, onRemove: Function, onF
         <div
             style={{
                 textAlign: "center",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+                wordBreak: "break-all"
             }}
+            title={props.host.alias ?? props.host.address}
         >
             {props.host.alias ?? props.host.address}
         </div>

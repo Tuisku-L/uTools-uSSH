@@ -161,7 +161,7 @@ export default class Index extends React.Component<IProps, IState>{
         }
 
         return (
-            <Layout style={{ minHeight: "100%" }}>
+            <Layout style={{ minHeight: "100%", maxHeight: "100%" }}>
                 <Layout.Sider theme="light">
                     <div style={{ padding: "1em" }}>
                         <Button
@@ -189,7 +189,7 @@ export default class Index extends React.Component<IProps, IState>{
                                     <Menu.Item key={group._id}>
                                         <div className={styles.groupLine}>
                                             <Row>
-                                                <Col span={18}>
+                                                <Col span={18} className={styles.text} title={group.name}>
                                                     {group.name}
                                                 </Col>
                                                 {
@@ -244,10 +244,10 @@ export default class Index extends React.Component<IProps, IState>{
                     </div>
                 </Layout.Sider>
                 <Layout>
-                    <Layout.Content>
+                    <Layout.Content style={{ maxHeight: "100%" }}>
                         {
                             currentGroup && currentGroup !== "" &&
-                            <div style={{ padding: "1em" }}>
+                            <div style={{ padding: "1em", maxHeight: "100%", overflowX: "hidden", overflowY: "auto" }}>
                                 <HostList groupId={currentGroup} />
                             </div>
                         }

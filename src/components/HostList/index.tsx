@@ -164,7 +164,7 @@ export default class HostList extends React.Component<IProps, IState>{
                         <Row gutter={16}>
                             {
                                 hosts.map(host =>
-                                    <Col span={8} key={host._id}>
+                                    <Col span={8} key={host._id} style={{ marginBottom: "1em" }}>
                                         <HostCard
                                             host={host}
                                             onEdit={() => this.actionOnEdit(host)}
