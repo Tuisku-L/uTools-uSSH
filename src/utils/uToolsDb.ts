@@ -75,25 +75,51 @@ export function getFixedHosts() {
     return window.utools.db.allDocs<Host>(result.list);
 };
 
-export function getTerminalType(): "Terminal" | "iTerm" {
-    const result = window.utools.db.get<{ _id: string, type: "Terminal" | "iTerm" }>("terminal_type");
-    let type: "Terminal" | "iTerm" = "Terminal";
+export function getTerminalType(): "Terminal" | "iTerm" | "cmd" | "PowerShell" {
+    const result = window.utools.db.get<{ _id: string, type: "Terminal" | "iTerm" | "cmd" | "PowerShell" }>("terminal_type");
+    let type: "Terminal" | "iTerm" | "cmd" | "PowerShell" = "Terminal";
     if (!result) {
-        window.utools.db.put({
-            _id: "terminal_type",
-            type: "Terminal"
-        });
+        if (window.utools.isMacOs()) {
+            window.utools.db.put({
+                _id: "terminal_type",
+                type: "Terminal"
+            });
 
-        type = "Terminal";
+            type = "Terminal";
+        }
+
+        if (window.utools.isWindows()) {
+            window.utools.db.put({
+                _id: "terminal_type",
+                type: "cmd"
+            });
+
+            type = "cmd";
+        }
     } else {
-        type = result.type;
+        if (window.utools.isMacOs()) {
+            if (["Terminal", "iTerm"].includes(type)) {
+                type = result.type;
+            } else {
+                type = "Terminal";
+                changeTerminalType("Terminal");
+            }
+        }
+        if (window.utools.isWindows()) {
+            if (["cmd", "PowerShell"].includes(type)) {
+                type = result.type;
+            } else {
+                type = "cmd";
+                changeTerminalType("cmd");
+            }
+        }
     }
 
     return type;
 };
 
-export function changeTerminalType(type: "Terminal" | "iTerm") {
-    const result = window.utools.db.get<{ _id: string, type: "Terminal" | "iTerm" }>("terminal_type");
+export function changeTerminalType(type: "Terminal" | "iTerm" | "cmd" | "PowerShell") {
+    const result = window.utools.db.get<{ _id: string, type: "Terminal" | "iTerm" | "cmd" | "PowerShell" }>("terminal_type");
     result.type = type;
     const changeResult = window.utools.db.put(result);
 

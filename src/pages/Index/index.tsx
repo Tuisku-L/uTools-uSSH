@@ -20,7 +20,7 @@ interface IState {
     currentGroup: string;
     modalDisplay: boolean;
     editGroup: Group | undefined;
-    terminalType: "Terminal" | "iTerm" | null;
+    terminalType: "Terminal" | "iTerm" | "cmd" | "PowerShell" | null;
 }
 
 export default class Index extends React.Component<IProps, IState>{
@@ -121,11 +121,20 @@ export default class Index extends React.Component<IProps, IState>{
                 <div>
                     <Radio.Group
                         defaultValue={window.terminalType}
-                        // ref={ref => this.radioType = ref}
                         onChange={e => this.setState({ terminalType: e.target.value })}
                     >
-                        <Radio value="Terminal">Terminal</Radio>
-                        <Radio value="iTerm">iTerm</Radio>
+                        {
+                            window.utools.isMacOs() ?
+                                <>
+                                    <Radio value="Terminal">Terminal</Radio>
+                                    <Radio value="iTerm">iTerm</Radio>
+                                </> :
+                                window.utools.isWindows() ?
+                                    <>
+                                        <Radio value="cmd">CMD</Radio>
+                                        <Radio value="PowerShell">PowerShell</Radio>
+                                    </> : null
+                        }
                     </Radio.Group >
                 </div><br />
                 <div>

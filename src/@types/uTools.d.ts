@@ -11,6 +11,11 @@ declare namespace utools {
     export function showOpenDialog(options: ShowOpenDialogOptions): Array<string> | undefined;
     export function showNotification(body: string, clickFeatureCode?: string): void;
     export function getPath(name: string): string;
+
+    export function isMacOs(): boolean;
+    export function isWindows(): boolean;
+    export function isLinux(): boolean;
+
     export namespace db {
         interface DbObject {
             _id: string;
